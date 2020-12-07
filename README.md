@@ -99,3 +99,275 @@ function main() {
 ```
 ### 코드 동작 설명
 ```
+class Cube {
+  constructor() {
+    this.time = this.setTime(); // 경과시간 설정
+  }
+
+  // 큐브 전개도
+  //    2
+  // 3  1  5  6
+  //    4
+  cube1 = ["B", "B", "B", "B", "B", "B", "B", "B", "B"];
+  cube2 = ["W", "W", "W", "W", "W", "W", "W", "W", "W"];
+  cube3 = ["O", "O", "O", "O", "O", "O", "O", "O", "O"];
+  cube4 = ["G", "G", "G", "G", "G", "G", "G", "G", "G"];
+  cube5 = ["Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y"];
+  cube6 = ["R", "R", "R", "R", "R", "R", "R", "R", "R"];
+
+  command = ""; // 숫자입력시 마지막 입력 확인을 위한 입력기록
+  backtick = []; // `의 인덱스를 담을 배열
+
+  indexCount = 0; // `의 인덱스를 이용하기위한 입력의 인덱스값
+  moveCount = 0; // 큐브를 돌린 횟수
+
+  execute(input) {
+    // `을 제거한 입력값 기록
+    this.command = this.removeBacktick(input).split("");
+    // 입력값을 순회하며 큐브 회전
+    for (let type of this.command) this.checkType(type);
+    // 변수 초기화
+    this.command = "";
+    this.backtick = [];
+    this.indexCount = 0;
+  }
+
+  // ` 제거 및 ` 인덱스 기록
+  removeBacktick(input) {
+    this.backtick.push(input.indexOf("`"));
+    const removedInput = input.replace("`", "");
+    // `이 남아있다면 재귀, 없다면 결과값 반환
+    return removedInput.includes("`") ? this.removeBacktick(removedInput) : removedInput;
+  }
+
+  // 전개도 출력
+  printCube() {
+    const order = [this.cube3, this.cube1, this.cube5, this.cube6]; // 옆면에 표시될 큐브 면들
+    const row = [[0, 1, 2],  [3, 4, 5],  [6, 7, 8]];
+
+    this.printSide(this.cube2); // 윗면 출력
+
+    // 옆면 출력
+    for (let i of row) {
+      for (let cube of order)
+        process.stdout.write(cube[i[0]] + " " + cube[i[1]] + " " + cube[i[2]] + " ");
+      console.log("");
+    }
+
+    this.printSide(this.cube4); // 밑면 출력
+
+    console.log("");
+  }
+
+  // 큐브의 한 면 출력
+  printSide(cube) {
+    const arr1 = cube.slice(0, 3);
+    const arr2 = cube.slice(3, 6);
+    const arr3 = cube.slice(6, 9);
+    // 전개도 모양을 위한 띄어쓰기
+    console.log("      " + arr1.join(" "));
+    console.log("      " + arr2.join(" "));
+    console.log("      " + arr3.join(" "));
+  }
+
+  // 입력값 분석
+  checkType(type) {
+    if (type === "Q") return this.endGame();
+    else if (type === "S") return this.shuffle();
+    // 입력값이 숫자일 경우 마지막 명령 숫자만큼 반복
+    else if (!isNaN(type)) {
+      for (let i = 0; i < parseInt(type, 10) - 1; i++)
+        this.moveCube(this.command[this.indexCount - 1]);
+      this.indexCount++;
+      return;
+    }
+    this.indexCount++;
+    this.moveCube(type); // 큐브 회전 실행
+  }
+
+  // 무작위 섞기 기능
+  shuffle(count = 10) {
+    for (let i = 0; i < count; i++) {
+      const randomInt = Math.random();
+      if (randomInt > 5 / 6) this.moveFront();
+      else if (randomInt > 4 / 6) this.moveRight();
+      else if (randomInt > 3 / 6) this.moveUp();
+      else if (randomInt > 2 / 6) this.moveBack();
+      else if (randomInt > 1 / 6) this.moveLeft();
+      else this.moveDown();
+    }
+    console.log("S");
+    this.printCube();
+  }
+
+  // 현재 인덱스의 ` 포함 여부
+  isBacktick() {
+    return this.backtick.includes(this.indexCount);
+  }
+
+  // 모든 면의 색이 통일되어 있는가
+  isWin() {
+    const allCube = [this.cube1, this.cube2, this.cube3, this.cube4, this.cube5, this.cube6];
+
+    for (let cube of allCube) {
+      const set = new Set(cube); // indent를 줄이기 위해 set을 이용해 중복 제거
+      if (set.size > 1) return false;
+    }
+    return true;
+  }
+
+  // 게임 종료 메세지 출력
+  endGame() {
+    console.log("경과시간: " + this.getTime());
+    console.log("조작갯수: " + this.moveCount);
+    if (this.isWin()) console.log("축하드립니다. 뚜루뚜뚜뚜");
+    else console.log("이용해주셔서 감사합니다. 뚜뚜뚜");
+  }
+
+  // 큐브 회전 방향 분석 및 결과값 출력
+  moveCube(type) {
+    this.moveCount++;
+    if (type === "F") this.moveFront();
+    else if (type === "R") this.moveRight();
+    else if (type === "U") this.moveUp();
+    else if (type === "B") this.moveBack();
+    else if (type === "L") this.moveLeft();
+    else if (type === "D") this.moveDown();
+
+    this.backtick.includes(this.indexCount) ? console.log(type + "`") : console.log(type);
+    this.printCube();
+
+    if (this.isWin()) this.endGame();
+  }
+
+  // 큐브 회전
+  turnCube(fromCube, fromIndex, toCube, toIndex) {
+    for (let i = 0; i < 3; i++) fromCube[fromIndex[i]] = toCube[toIndex[i]];
+  }
+
+  // --- 방향에 따른 큐브 회전 ---
+  moveUp() {
+    const arr = [this.cube1[0], this.cube1[1], this.cube1[2]];
+    if (this.isBacktick()) {
+      this.turnCube(this.cube1, [0, 1, 2], this.cube3, [0, 1, 2]);
+      this.turnCube(this.cube3, [0, 1, 2], this.cube6, [0, 1, 2]);
+      this.turnCube(this.cube6, [0, 1, 2], this.cube5, [0, 1, 2]);
+      this.turnCube(this.cube5, [0, 1, 2], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube1, [0, 1, 2], this.cube5, [0, 1, 2]);
+      this.turnCube(this.cube5, [0, 1, 2], this.cube6, [0, 1, 2]);
+      this.turnCube(this.cube6, [0, 1, 2], this.cube3, [0, 1, 2]);
+      this.turnCube(this.cube3, [0, 1, 2], arr, [0, 1, 2]);
+    }
+  }
+
+  moveFront() {
+    const arr = [this.cube2[6], this.cube2[7], this.cube2[8]];
+    if (this.isBacktick()) {
+      this.turnCube(this.cube2, [6, 7, 8], this.cube3, [8, 5, 2]);
+      this.turnCube(this.cube3, [8, 5, 2], this.cube4, [2, 1, 0]);
+      this.turnCube(this.cube4, [2, 1, 0], this.cube5, [0, 3, 6]);
+      this.turnCube(this.cube5, [0, 3, 6], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube2, [6, 7, 8], this.cube5, [0, 3, 6]);
+      this.turnCube(this.cube5, [0, 3, 6], this.cube4, [2, 1, 0]);
+      this.turnCube(this.cube4, [2, 1, 0], this.cube3, [8, 5, 2]);
+      this.turnCube(this.cube3, [8, 5, 2], arr, [0, 1, 2]);
+    }
+  }
+
+  moveRight() {
+    const arr = [this.cube1[2], this.cube1[5], this.cube1[8]];
+    if (this.isBacktick()) {
+      this.turnCube(this.cube1, [2, 5, 8], this.cube2, [2, 5, 8]);
+      this.turnCube(this.cube2, [2, 5, 8], this.cube6, [6, 3, 0]);
+      this.turnCube(this.cube6, [6, 3, 0], this.cube4, [2, 5, 8]);
+      this.turnCube(this.cube4, [2, 5, 8], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube1, [2, 5, 8], this.cube4, [2, 5, 8]);
+      this.turnCube(this.cube4, [2, 5, 8], this.cube6, [6, 3, 0]);
+      this.turnCube(this.cube6, [6, 3, 0], this.cube2, [2, 5, 8]);
+      this.turnCube(this.cube2, [2, 5, 8], arr, [0, 1, 2]);
+    }
+  }
+
+  moveLeft() {
+    const arr = [this.cube1[0], this.cube1[3], this.cube1[6]];
+    if (this.isBacktick()) {
+      this.turnCube(this.cube1, [0, 3, 6], this.cube4, [0, 3, 6]);
+      this.turnCube(this.cube4, [0, 3, 6], this.cube6, [8, 5, 2]);
+      this.turnCube(this.cube6, [8, 5, 2], this.cube2, [0, 3, 6]);
+      this.turnCube(this.cube2, [0, 3, 6], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube1, [0, 3, 6], this.cube2, [0, 3, 6]);
+      this.turnCube(this.cube2, [0, 3, 6], this.cube6, [8, 5, 2]);
+      this.turnCube(this.cube6, [8, 5, 2], this.cube4, [0, 3, 6]);
+      this.turnCube(this.cube4, [0, 3, 6], arr, [0, 1, 2]);
+    }
+  }
+
+  moveBack() {
+    const arr = [this.cube2[0], this.cube2[1], this.cube2[2]];
+    if (this.isBacktick()) {
+      this.turnCube(this.cube2, [0, 1, 2], this.cube3, [6, 3, 0]);
+      this.turnCube(this.cube3, [6, 3, 0], this.cube4, [8, 7, 6]);
+      this.turnCube(this.cube4, [8, 7, 6], this.cube5, [2, 5, 8]);
+      this.turnCube(this.cube5, [2, 5, 8], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube2, [0, 1, 2], this.cube5, [2, 5, 8]);
+      this.turnCube(this.cube5, [2, 5, 8], this.cube4, [8, 7, 6]);
+      this.turnCube(this.cube4, [8, 7, 6], this.cube3, [6, 3, 0]);
+      this.turnCube(this.cube3, [6, 3, 0], arr, [0, 1, 2]);
+    }
+  }
+
+  moveDown() {
+    const arr = [this.cube1[6], this.cube1[7], this.cube1[8]];
+    if (this.isBacktick()) {
+      this.turnCube(this.cube1, [6, 7, 8], this.cube5, [6, 7, 8]);
+      this.turnCube(this.cube5, [6, 7, 8], this.cube6, [6, 7, 8]);
+      this.turnCube(this.cube6, [6, 7, 8], this.cube3, [6, 7, 8]);
+      this.turnCube(this.cube3, [6, 7, 8], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube1, [6, 7, 8], this.cube3, [6, 7, 8]);
+      this.turnCube(this.cube3, [6, 7, 8], this.cube6, [6, 7, 8]);
+      this.turnCube(this.cube6, [6, 7, 8], this.cube5, [6, 7, 8]);
+      this.turnCube(this.cube5, [6, 7, 8], arr, [0, 1, 2]);
+    }
+  }
+
+  // 시간기록
+  setTime() {
+    return Date.now();
+  }
+
+  // 종료까지의 시간계산
+  getTime() {
+    const time = (Date.now() - this.time) / 1000;
+    const minute = Math.floor(time / 60);
+    const second = Math.floor((time / 60 - minute) * 60);
+    return `${minute}:${second}`;
+  }
+}
+
+const cube = new Cube();
+
+// 리드라인
+
+const readline = require("readline");
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  prompt: "CUBE>",
+});
+
+cube.printCube();
+rl.prompt();
+rl.on("line", function (line) {
+  cube.execute(line);
+  if (line.includes(`Q`) || cube.isWin()) rl.close();
+  rl.prompt();
+}).on("close", function () {
+  process.exit();
+});
+```
