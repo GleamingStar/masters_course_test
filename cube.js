@@ -88,7 +88,7 @@ const rl = readline.createInterface({
     prompt: "CUBE>",
 });
 
-console.log(cube.printCube());
+cube.printCube();
 rl.prompt();
 rl.on("line", function (line) {
     cube.execute(line);
