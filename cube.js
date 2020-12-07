@@ -125,7 +125,6 @@ class Cube {
   }
 
   moveCube(type) {
-    this.moveCount++;
     if (type === "F") 
       this.moveFront();
     else if (type === "R") 
@@ -150,6 +149,7 @@ class Cube {
   }
 
   moveUp() {
+    this.moveCount++;
     const arr = [this.cube1[0], this.cube1[1], this.cube1[2]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [0, 1, 2], this.cube3, [0, 1, 2]);
@@ -165,6 +165,7 @@ class Cube {
   }
 
   moveFront() {
+    this.moveCount++;
     const arr = [this.cube2[6], this.cube2[7], this.cube2[8]];
     if (this.isBacktick()) {
       this.turnCube(this.cube2, [6, 7, 8], this.cube3, [8, 5, 2]);
@@ -180,6 +181,7 @@ class Cube {
   }
 
   moveRight() {
+    this.moveCount++;
     const arr = [this.cube1[2], this.cube1[5], this.cube1[8]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [2, 5, 8], this.cube2, [2, 5, 8]);
@@ -195,6 +197,7 @@ class Cube {
   }
 
   moveLeft() {
+    this.moveCount++;
     const arr = [this.cube1[0], this.cube1[3], this.cube1[6]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [0, 3, 6], this.cube4, [0, 3, 6]);
@@ -210,6 +213,7 @@ class Cube {
   }
 
   moveBack() {
+    this.moveCount++;
     const arr = [this.cube2[0], this.cube2[1], this.cube2[2]];
     if (this.isBacktick()) {
       this.turnCube(this.cube2, [0, 1, 2], this.cube3, [6, 3, 0]);
@@ -225,6 +229,7 @@ class Cube {
   }
 
   moveDown() {
+    this.moveCount++;
     const arr = [this.cube1[6], this.cube1[7], this.cube1[8]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [6, 7, 8], this.cube5, [6, 7, 8]);
