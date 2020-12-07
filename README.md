@@ -201,7 +201,7 @@ class Cube {
   // 입력값 분석
   checkType(type) {
     if (type === "Q") 
-      return this.endGame();
+      return;
     else if (type === "S") 
       return this.shuffle();
     // 입력값이 숫자일 경우 마지막 명령 숫자만큼 반복
@@ -252,8 +252,6 @@ class Cube {
       this.moveDown();
     this.backtick.includes(this.indexCount) ? console.log(type + "`") : console.log(type);
     this.printCube();
-    if (this.isWin()) 
-      this.endGame();
   }
 
   // 큐브 회전
@@ -390,8 +388,10 @@ cube.printCube();
 rl.prompt();
 rl.on("line", function (line) {
   cube.execute(line);
-  if (line.includes(`Q`) || cube.isWin()) 
+  if (line.includes(`Q`) || cube.isWin()) {
+    cube.endGame();
     rl.close();
+  }
   rl.prompt();
 }).on("close", function () {
   process.exit();

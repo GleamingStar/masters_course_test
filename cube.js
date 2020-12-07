@@ -91,7 +91,7 @@ class Cube {
   
   checkType(type) {
     if (type === "Q") 
-      return this.endGame();
+      return;
     else if (type === "S") 
       return this.shuffle();
     else if (!isNaN(type)) {
@@ -139,8 +139,6 @@ class Cube {
       this.moveDown();
     this.backtick.includes(this.indexCount) ? console.log(type + "`") : console.log(type);
     this.printCube();
-    if (this.isWin()) 
-      this.endGame();
   }
 
   turnCube(fromCube, fromIndex, toCube, toIndex) {
@@ -271,8 +269,10 @@ cube.printCube();
 rl.prompt();
 rl.on("line", function (line) {
   cube.execute(line);
-  if (line.includes(`Q`) || cube.isWin()) 
+  if (line.includes(`Q`) || cube.isWin()) {
+    cube.endGame();
     rl.close();
+  }
   rl.prompt();
 }).on("close", function () {
   process.exit();
