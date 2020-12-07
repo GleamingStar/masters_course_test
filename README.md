@@ -38,147 +38,64 @@ G B B
 > B' 가장 아랫줄을 왼쪽으로 한 칸 밀기 GBB -> BBG
 > Q  Bye~를 출력하고 프로그램을 종료한다.
 ```
-### 요구사항
-- 처음 시작하면 초기 상태를 출력한다.
-- 간단한 프롬프트 (CLI에서 키보드 입력받기 전에 표시해주는 간단한 글자들 - 예: CUBE> )를 표시해 준다.
-- 한 번에 여러 문자를 입력받은 경우 순서대로 처리해서 매 과정을 화면에 출력한다.
-
-### 동작 예시
+## step-3 : 루빅스 큐브 구현하기
+- [참고 링크](https://cube3x3.com/%ED%81%90%EB%B8%8C%EB%A5%BC-%EB%A7%9E%EC%B6%94%EB%8A%94-%EB%B0%A9/#notation)를 참고해서 루빅스 큐브를 구현한다.
+- 큐브는 W, B, G, Y, O, R의 6가지 색깔을 가지고 있다.
+- 입력: 각 조작법을 한 줄로 입력받는다.
+- 출력: 큐브의 6면을 펼친 상태로 출력한다.
+- Q를 입력받으면 프로그램을 종료하고, 조작 받은 명령의 갯수를 출력시킨다.
+### 큐브의 초기 상태
 ```
-R R W
-G C W
-G B B
+                B B B  
+                B B B
+                B B B
 
-CUBE> UUR
+ W W W     O O O     G G G     Y Y Y 
+ W W W     O O O     G G G     Y Y Y 
+ W W W     O O O     G G G     Y Y Y 
+ 
+                R R R 
+                R R R 
+                R R R 
+```
+### 프로그램 예시
+```
+(초기 상태 출력)
 
-U
-W R R 
-G C W
-G B B
+CUBE> FRR'U2R
 
-U
-R W R  
-G C W
-G B B
+F
+(큐브상태)
 
 R
-R W W 
-G C B
-G B R
+(큐브상태)
+
+...
+
+R
+(큐브상태)
 
 CUBE> Q
-Bye~
+경과시간: 00:31 //추가 구현 항목
+조작갯수: 6
+이용해주셔서 감사합니다. 뚜뚜뚜.
+```
+### 추가 구현 기능
+- 프로그램 종료 시 경과 시간 출력
+- 큐브의 무작위 섞기 기능
+- 모든 면을 맞추면 축하 메시지와 함께 프로그램을 자동 종료
+### 요구사항
+- 가능한 한 커밋을 자주 하고 구현의 의미가 명확하게 전달되도록 커밋 메시지를 작성할 것
+- 함수나 메소드는 한 번에 한 가지 일을 하고 가능하면 20줄이 넘지 않도록 구현한다.
+- 함수나 메소드의 들여쓰기를 가능하면 적게(3단계까지만) 할 수 있도록 노력해 본다.
+```
+function main() {
+      for() { // 들여쓰기 1단계
+          if() { // 들여쓰기 2단계
+              return; // 들여쓰기 3단계
+          }
+      }
+  }
 ```
 ### 코드 동작 설명
-```
-class Cube{
-
-    cube = ['R','R','W','G','C','W','G','B','B']; // 평면 큐브의 초기값
-
-    backtick = []; // `의 인덱스를 담을 배열
-    
-    count = 0; //`의 인덱스를 이용하기위해 move할때마다 올라갈 count
-
-    // 실행 함수
-    execute(input){
-        const arr = this.removeBacktick(input).split('');
-        for(let type of arr)
-            this.moveCube(type)
-    }
-
-    // `제거 및 `인덱스 기록
-    removeBacktick(input) {
-        this.backtick.push(input.indexOf('`'));
-        const removedInput = input.replace('`','');
-        // `이 남아있다면 재귀, 없다면 결과값 반환
-        return removedInput.includes('`') ? this.removeBacktick(removedInput) : removedInput;
-    }
-
-    // cube 배열을 3등분하여 출력
-    printCube() {
-        const arr1 = this.cube.slice(0,3);
-        const arr2 = this.cube.slice(3,6);
-        const arr3 = this.cube.slice(6,9);
-        console.log(arr1.join(' '))
-        console.log(arr2.join(' '))
-        console.log(arr3.join(' '))
-    }
-
-    // 반복문으로 해당 type에 맞는 메서드 실행 및 출력
-    moveCube(type){
-        this.count++
-        if(type === "U") {
-            this.moveUp()
-        } else if (type === "R") {
-            this.moveRight()
-        } else if (type === "L") {
-            this.moveLeft()
-        } else if (type === "B") {
-            this.moveBottom()
-        } else if (type === "Q") {
-            return console.log('Bye~')
-        }
-
-        this.backtick.includes(this.count) ? console.log(type+'`') : console.log(type);
-        this.printCube();
-        console.log('');
-    }
-
-    moveUp() { 
-        // 해당 type에 맞는 값을 가져온다
-        const arr = [this.cube[0], this.cube[1], this.cube[2]];
-        // 해당 차례에 `가 있었는지 체크
-        this.backtick.includes(this.count) ? arr.unshift(arr.pop()) : arr.push(arr.shift());
-        // cube의 내용을 바꿔준다
-        this.cube[0] = arr[0];
-        this.cube[1] = arr[1];
-        this.cube[2] = arr[2];
-    }
-
-    moveRight() {
-        const arr = [this.cube[2], this.cube[5], this.cube[8]];
-        this.backtick.includes(this.count) ? arr.unshift(arr.pop()) : arr.push(arr.shift());
-        this.cube[2] = arr[0];
-        this.cube[5] = arr[1];
-        this.cube[8] = arr[2];
-    }
-
-    moveLeft() {
-        const arr = [this.cube[0], this.cube[3], this.cube[6]];
-        this.backtick.includes(this.count) ? arr.push(arr.shift()) : arr.unshift(arr.pop());
-        this.cube[0] = arr[0];
-        this.cube[3] = arr[1];
-        this.cube[6] = arr[2];
-    }
-
-    moveBottom() {
-        const arr = [this.cube[6], this.cube[7], this.cube[8]];
-        this.backtick.includes(this.count) ? arr.push(arr.shift()) : arr.unshift(arr.pop());
-        this.cube[6] = arr[0];
-        this.cube[7] = arr[1];
-        this.cube[8] = arr[2];
-    }
-}
-
-const cube = new Cube();
-
-// 리드라인
-const readline = require("readline");
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    prompt: "CUBE>",
-});
-
-cube.printCube();
-rl.prompt();
-rl.on("line", function (line) {
-    cube.execute(line);
-    // 입력값에 Q가 포함되어 있다면 종료
-    if(line.includes(`Q`))
-        rl.close();
-    rl.prompt();
-}).on("close", function () {
-    process.exit();
-});
 ```
