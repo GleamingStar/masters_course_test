@@ -101,7 +101,7 @@ function main() {
 ```
 class Cube {
   constructor() {
-    this.time = this.setTime(); // 경과시간 설정
+    this.startTime = this.setTime(); // 경과시간 설정
   }
 
   // 큐브 전개도
@@ -125,7 +125,8 @@ class Cube {
     // `을 제거한 입력값 기록
     this.command = this.removeBacktick(input).split("");
     // 입력값을 순회하며 큐브 회전
-    for (let type of this.command) this.checkType(type);
+    for (let type of this.command) 
+      this.checkType(type);
     // 변수 초기화
     this.command = "";
     this.backtick = [];
@@ -150,13 +151,12 @@ class Cube {
     // 옆면 출력
     for (let i of row) {
       for (let cube of order)
-        process.stdout.write(cube[i[0]] + " " + cube[i[1]] + " " + cube[i[2]] + " ");
+        process.stdout.write(cube[i[0]] + " " + cube[i[1]] + " " + cube[i[2]] + "   ");
       console.log("");
     }
+    console.log("");
 
     this.printSide(this.cube4); // 밑면 출력
-
-    console.log("");
   }
 
   // 큐브의 한 면 출력
@@ -165,15 +165,45 @@ class Cube {
     const arr2 = cube.slice(3, 6);
     const arr3 = cube.slice(6, 9);
     // 전개도 모양을 위한 띄어쓰기
-    console.log("      " + arr1.join(" "));
-    console.log("      " + arr2.join(" "));
-    console.log("      " + arr3.join(" "));
+    console.log("        " + arr1.join(" "));
+    console.log("        " + arr2.join(" "));
+    console.log("        " + arr3.join(" "));
+    console.log("")
+  }
+
+  // 현재 인덱스의 ` 포함 여부
+  isBacktick() {
+    return this.backtick.includes(this.indexCount);
+  }
+
+  // 모든 면의 색이 통일되어 있는가
+  isWin() {
+    const allCube = [this.cube1, this.cube2, this.cube3, this.cube4, this.cube5, this.cube6];
+    for (let cube of allCube) {
+      const set = new Set(cube); // set을 이용한 중복 제거
+      if (set.size > 1) 
+        return false;
+    }
+    if (this.moveCount > 0) 
+      return true;
+  }
+
+  // 게임 종료 메세지 출력
+  endGame() {
+    console.log("경과시간: " + this.getTime());
+    console.log("조작갯수: " + this.moveCount);
+    if (this.isWin()) 
+      console.log("축하드립니다. 뚜루뚜뚜뚜");
+    else 
+      console.log("이용해주셔서 감사합니다. 뚜뚜뚜");
   }
 
   // 입력값 분석
   checkType(type) {
-    if (type === "Q") return this.endGame();
-    else if (type === "S") return this.shuffle();
+    if (type === "Q") 
+      return this.endGame();
+    else if (type === "S") 
+      return this.shuffle();
     // 입력값이 숫자일 경우 마지막 명령 숫자만큼 반복
     else if (!isNaN(type)) {
       for (let i = 0; i < parseInt(type, 10) - 1; i++)
@@ -189,60 +219,48 @@ class Cube {
   shuffle(count = 10) {
     for (let i = 0; i < count; i++) {
       const randomInt = Math.random();
-      if (randomInt > 5 / 6) this.moveFront();
-      else if (randomInt > 4 / 6) this.moveRight();
-      else if (randomInt > 3 / 6) this.moveUp();
-      else if (randomInt > 2 / 6) this.moveBack();
-      else if (randomInt > 1 / 6) this.moveLeft();
-      else this.moveDown();
+      if (randomInt > 5 / 6) 
+        this.moveFront();
+      else if (randomInt > 4 / 6) 
+        this.moveRight();
+      else if (randomInt > 3 / 6) 
+        this.moveUp();
+      else if (randomInt > 2 / 6) 
+        this.moveBack();
+      else if (randomInt > 1 / 6) 
+        this.moveLeft();
+      else 
+        this.moveDown();
     }
     console.log("S");
     this.printCube();
   }
 
-  // 현재 인덱스의 ` 포함 여부
-  isBacktick() {
-    return this.backtick.includes(this.indexCount);
-  }
-
-  // 모든 면의 색이 통일되어 있는가
-  isWin() {
-    const allCube = [this.cube1, this.cube2, this.cube3, this.cube4, this.cube5, this.cube6];
-
-    for (let cube of allCube) {
-      const set = new Set(cube); // indent를 줄이기 위해 set을 이용해 중복 제거
-      if (set.size > 1) return false;
-    }
-    return true;
-  }
-
-  // 게임 종료 메세지 출력
-  endGame() {
-    console.log("경과시간: " + this.getTime());
-    console.log("조작갯수: " + this.moveCount);
-    if (this.isWin()) console.log("축하드립니다. 뚜루뚜뚜뚜");
-    else console.log("이용해주셔서 감사합니다. 뚜뚜뚜");
-  }
-
   // 큐브 회전 방향 분석 및 결과값 출력
   moveCube(type) {
     this.moveCount++;
-    if (type === "F") this.moveFront();
-    else if (type === "R") this.moveRight();
-    else if (type === "U") this.moveUp();
-    else if (type === "B") this.moveBack();
-    else if (type === "L") this.moveLeft();
-    else if (type === "D") this.moveDown();
-
+    if (type === "F") 
+      this.moveFront();
+    else if (type === "R") 
+      this.moveRight();
+    else if (type === "U") 
+      this.moveUp();
+    else if (type === "B") 
+      this.moveBack();
+    else if (type === "L") 
+      this.moveLeft();
+    else if (type === "D") 
+      this.moveDown();
     this.backtick.includes(this.indexCount) ? console.log(type + "`") : console.log(type);
     this.printCube();
-
-    if (this.isWin()) this.endGame();
+    if (this.isWin()) 
+      this.endGame();
   }
 
   // 큐브 회전
   turnCube(fromCube, fromIndex, toCube, toIndex) {
-    for (let i = 0; i < 3; i++) fromCube[fromIndex[i]] = toCube[toIndex[i]];
+    for (let i = 0; i < 3; i++) 
+      fromCube[fromIndex[i]] = toCube[toIndex[i]];
   }
 
   // --- 방향에 따른 큐브 회전 ---
@@ -343,9 +361,11 @@ class Cube {
 
   // 종료까지의 시간계산
   getTime() {
-    const time = (Date.now() - this.time) / 1000;
-    const minute = Math.floor(time / 60);
-    const second = Math.floor((time / 60 - minute) * 60);
+    const time = (Date.now() - this.startTime) / 1000;
+    let minute = Math.floor(time / 60);
+    let second = Math.floor((time / 60 - minute) * 60);
+    minute = minute.toString().length === 1 ? "0" + minute : minute;
+    second = second.toString().length === 1 ? "0" + second : second;
     return `${minute}:${second}`;
   }
 }
@@ -365,7 +385,8 @@ cube.printCube();
 rl.prompt();
 rl.on("line", function (line) {
   cube.execute(line);
-  if (line.includes(`Q`) || cube.isWin()) rl.close();
+  if (line.includes(`Q`) || cube.isWin()) 
+    rl.close();
   rl.prompt();
 }).on("close", function () {
   process.exit();
