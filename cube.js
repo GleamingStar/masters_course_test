@@ -1,6 +1,6 @@
 class Cube {
     constructor() {
-        this.time = this.setTime()
+        this.time = this.setTime();
     }
 
     // 큐브 전개도
@@ -14,15 +14,21 @@ class Cube {
     cube5 = ['Y','Y','Y','Y','Y','Y','Y','Y','Y'];
     cube6 = ['R','R','R','R','R','R','R','R','R'];
 
+    command = "";
     backtick = [];
-    multiple = [];
     
-    count = 0;
+    indexCount = 0;
+    moveCount = 0;
 
     execute(input){
-        const arr = this.removeMultiple(this.removeBacktick(input)).split('');
-        for(let type of arr)
-            this.moveCube(type)
+        this.command = this.removeBacktick(input).split('');
+
+        for(let type of this.command)
+            this.checkType(type);
+
+        this.command = "";
+        this.backtick = [];
+        this.indexCount = 0;
     }
 
     removeBacktick(input) {
@@ -31,60 +37,53 @@ class Cube {
         return removedInput.includes('`') ? this.removeBacktick(removedInput) : removedInput;
     }
 
-    removeMultiple(input) {
-        const index = input.search(/[0-9]/);
-        this.multiple.push({index : index, value : input[index]});
-        const removedInput = input.replace(/[0-9]/,'');
-        return removedInput.match(/[0-9]/) ? this.removeMultiple(removedInput) : removedInput;
-    }
-
     printCube(){
-        const order = [this.cube2, this.cube3, this.cube1, this.cube5, this.cube6, this.cube4]
-        for(let cube of order)
-            this.printSide(cube)
+        const order = [this.cube3, this.cube1, this.cube5, this.cube6];
+        const row = [[0,1,2], [3,4,5], [6,7,8]];
+        
+        this.printSide(this.cube2);
+
+        for(let i of row) {
+            for(let cube of order)
+                process.stdout.write(cube[i[0]]+" "+cube[i[1]]+" "+cube[i[2]]+" ");
+            console.log("");
+        }
+
+        this.printSide(this.cube4);
+
+        console.log('');
     }
 
     printSide(cube) {
         const arr1 = cube.slice(0,3);
         const arr2 = cube.slice(3,6);
         const arr3 = cube.slice(6,9);
-        console.log(arr1.join(' '))
-        console.log(arr2.join(' '))
-        console.log(arr3.join(' '))
+        console.log("      "+arr1.join(' '))
+        console.log("      "+arr2.join(' '))
+        console.log("      "+arr3.join(' '))
     }
 
-    moveCube(type){
+    checkType(type){
         if (type === "Q")
             return this.endExecute();
-        this.count++
-        this.moveDirection(type)
-            
-            
-        this.backtick.includes(this.count) ? console.log(type+'`') : console.log(type);
-        this.printCube();
-        console.log('');
-        if (this.isMultiple())
-            return this.moveCube(type)
+        if (!isNaN(type)) {
+            for(let i=0; i<parseInt(type,10)-1; i++)
+                this.moveCube(this.command[this.indexCount-1])
+            this.indexCount++;
+            return  
+        }
+        this.indexCount++;
+        this.moveCube(type)
     }
 
     isBacktick() {
-        return this.backtick.includes(this.count)
-    }
-
-    isMultiple() {
-        for(let obj of this.multiple){
-            if (obj.index === this.count && obj.value > 1) {
-                obj.value--;
-                return true
-            }
-        }
-        return false
+        return this.backtick.includes(this.indexCount)
     }
 
     endExecute() {
-        console.log("경과시간: "+this.getTime())
-        console.log("조작갯수: "+this.count)
-        console.log("이용해주셔서 감사합니다. 뚜뚜뚜")
+        console.log("경과시간: "+this.getTime());
+        console.log("조작갯수: "+this.moveCount);
+        console.log("이용해주셔서 감사합니다. 뚜뚜뚜");
     }
 
     setTime(){
@@ -92,32 +91,39 @@ class Cube {
     }
 
     getTime(){
-        return Math.floor((Date.now()-this.time)/1000)
+        const time = (Date.now()-this.time)/1000
+        const minute = Math.floor(time/60);
+        const second = Math.floor(((time/60)-minute)*60);
+        return `${minute}:${second}`;
     }
 
     isEnd(){//즉석에서 초기배열 생성, 현재 cube와 비교 후 return
         return false
     }
 
-    moveDirection(type) {
+    moveCube(type) {
+        this.moveCount++;
         if(type === "F") {
-            this.moveFront()
+            this.moveFront();
         } else if (type === "R") {
-            this.moveRight()
+            this.moveRight();
         } else if (type === "U") {
-            this.moveUp()
+            this.moveUp();
         } else if (type === "B") {
-            this.moveBack()
+            this.moveBack();
         } else if (type === "L") {
-            this.moveLeft()
+            this.moveLeft();
         } else if (type === "D") {
-            this.moveDown()
+            this.moveDown();
         }
+
+        this.backtick.includes(this.indexCount) ? console.log(type+'`') : console.log(type);
+        this.printCube();
     }
 
     turnCube(fromCube, fromIndex, toCube, toIndex) {
         for (let i = 0; i<3; i++)
-            fromCube[fromIndex[i]] = toCube[toIndex[i]]
+            fromCube[fromIndex[i]] = toCube[toIndex[i]];
     }
 
     moveUp() { 
@@ -183,7 +189,7 @@ class Cube {
 
     moveBack() {
         const arr = [this.cube2[0], this.cube2[1], this.cube2[2]];
-        this.backtick.includes(this.count) ? arr.push(arr.shift()) : arr.unshift(arr.pop());
+        this.backtick.includes(this.indexCount) ? arr.push(arr.shift()) : arr.unshift(arr.pop());
         if(this.isBacktick()) {
             this.turnCube(this.cube2,[0,1,2],this.cube3,[6,3,0])
             this.turnCube(this.cube3,[6,3,0],this.cube4,[8,7,6])
