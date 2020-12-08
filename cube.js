@@ -84,7 +84,7 @@ class Cube {
     console.log("경과시간: " + this.getTime());
     console.log("조작갯수: " + this.moveCount);
     if (this.isWin()) 
-      console.log("축하드립니다. 뚜루뚜뚜뚜");
+      console.log("축하드립니다. 뚜루루뚜루");
     else 
       console.log("이용해주셔서 감사합니다. 뚜뚜뚜");
   }
@@ -146,7 +146,7 @@ class Cube {
       fromCube[fromIndex[i]] = toCube[toIndex[i]];
   }
 
-  turnQuarter(cube, isReverse) {
+  turnSide(cube, isReverse) {
     const arr = [...cube];
     const cubeOrder = [0,1,2,3,4,5,6,7,8];
     const turnedOrder = [6,3,0,7,4,1,8,5,2];
@@ -154,106 +154,74 @@ class Cube {
     isReverse ? this.turnCube(cube, cubeOrder, arr, reversedOrder) : this.turnCube(cube, cubeOrder, arr, turnedOrder)
   }
 
+  turnEdge(...rest) {
+    const arr = [];
+    this.turnCube(arr, [0,1,2], ...rest[0])
+
+    for(let i=0; i<3; i++)
+      this.turnCube(...rest[i], ...rest[i+1])
+
+    this.turnCube(...rest[3], arr, [0,1,2])
+  }
+
   moveUp() {
     this.moveCount++;
-    this.turnQuarter(this.cube2, this.isApostrophe());
-    const arr = [this.cube1[0], this.cube1[1], this.cube1[2]];
-    if (this.isApostrophe()) {
-      this.turnCube(this.cube1, [0, 1, 2], this.cube3, [0, 1, 2]);
-      this.turnCube(this.cube3, [0, 1, 2], this.cube6, [0, 1, 2]);
-      this.turnCube(this.cube6, [0, 1, 2], this.cube5, [0, 1, 2]);
-      this.turnCube(this.cube5, [0, 1, 2], arr, [0, 1, 2]);
-    } else {
-      this.turnCube(this.cube1, [0, 1, 2], this.cube5, [0, 1, 2]);
-      this.turnCube(this.cube5, [0, 1, 2], this.cube6, [0, 1, 2]);
-      this.turnCube(this.cube6, [0, 1, 2], this.cube3, [0, 1, 2]);
-      this.turnCube(this.cube3, [0, 1, 2], arr, [0, 1, 2]);
-    }
+    this.turnSide(this.cube2, this.isApostrophe());
+    const arr1 = [this.cube1, [0,1,2]];
+    const arr2 = [this.cube3, [0,1,2]];
+    const arr3 = [this.cube6, [0,1,2]];
+    const arr4 = [this.cube5, [0,1,2]];
+    this.isApostrophe() ? this.turnEdge(arr1,arr2,arr3,arr4) : this.turnEdge(arr1,arr4,arr3,arr2)
   }
 
   moveFront() {
     this.moveCount++;
-    this.turnQuarter(this.cube1, this.isApostrophe());
-    const arr = [this.cube2[6], this.cube2[7], this.cube2[8]];
-    if (this.isApostrophe()) {
-      this.turnCube(this.cube2, [6, 7, 8], this.cube5, [0, 3, 6]);
-      this.turnCube(this.cube5, [0, 3, 6], this.cube4, [2, 1, 0]);
-      this.turnCube(this.cube4, [2, 1, 0], this.cube3, [8, 5, 2]);
-      this.turnCube(this.cube3, [8, 5, 2], arr, [0, 1, 2]);
-    } else {
-      this.turnCube(this.cube2, [6, 7, 8], this.cube3, [8, 5, 2]);
-      this.turnCube(this.cube3, [8, 5, 2], this.cube4, [2, 1, 0]);
-      this.turnCube(this.cube4, [2, 1, 0], this.cube5, [0, 3, 6]);
-      this.turnCube(this.cube5, [0, 3, 6], arr, [0, 1, 2]);
-    }
+    this.turnSide(this.cube1, this.isApostrophe());
+    const arr1 = [this.cube2, [6,7,8]];
+    const arr2 = [this.cube5, [0,3,6]];
+    const arr3 = [this.cube4, [2,1,0]];
+    const arr4 = [this.cube3, [8,5,2]];
+    this.isApostrophe() ? this.turnEdge(arr1,arr2,arr3,arr4) : this.turnEdge(arr1,arr4,arr3,arr2)
   }
 
   moveRight() {
     this.moveCount++;
-    this.turnQuarter(this.cube5, this.isApostrophe());
-    const arr = [this.cube1[2], this.cube1[5], this.cube1[8]];
-    if (this.isApostrophe()) {
-      this.turnCube(this.cube1, [2, 5, 8], this.cube2, [2, 5, 8]);
-      this.turnCube(this.cube2, [2, 5, 8], this.cube6, [6, 3, 0]);
-      this.turnCube(this.cube6, [6, 3, 0], this.cube4, [2, 5, 8]);
-      this.turnCube(this.cube4, [2, 5, 8], arr, [0, 1, 2]);
-    } else {
-      this.turnCube(this.cube1, [2, 5, 8], this.cube4, [2, 5, 8]);
-      this.turnCube(this.cube4, [2, 5, 8], this.cube6, [6, 3, 0]);
-      this.turnCube(this.cube6, [6, 3, 0], this.cube2, [2, 5, 8]);
-      this.turnCube(this.cube2, [2, 5, 8], arr, [0, 1, 2]);
-    }
+    this.turnSide(this.cube5, this.isApostrophe());
+    const arr1 = [this.cube1, [2,5,8]];
+    const arr2 = [this.cube2, [2,5,8]];
+    const arr3 = [this.cube6, [6,3,0]];
+    const arr4 = [this.cube4, [2,5,8]];
+    this.isApostrophe() ? this.turnEdge(arr1,arr2,arr3,arr4) : this.turnEdge(arr1,arr4,arr3,arr2)
   }
 
   moveLeft() {
     this.moveCount++;
-    this.turnQuarter(this.cube3, this.isApostrophe());
-    const arr = [this.cube1[0], this.cube1[3], this.cube1[6]];
-    if (this.isApostrophe()) {
-      this.turnCube(this.cube1, [0, 3, 6], this.cube4, [0, 3, 6]);
-      this.turnCube(this.cube4, [0, 3, 6], this.cube6, [8, 5, 2]);
-      this.turnCube(this.cube6, [8, 5, 2], this.cube2, [0, 3, 6]);
-      this.turnCube(this.cube2, [0, 3, 6], arr, [0, 1, 2]);
-    } else {
-      this.turnCube(this.cube1, [0, 3, 6], this.cube2, [0, 3, 6]);
-      this.turnCube(this.cube2, [0, 3, 6], this.cube6, [8, 5, 2]);
-      this.turnCube(this.cube6, [8, 5, 2], this.cube4, [0, 3, 6]);
-      this.turnCube(this.cube4, [0, 3, 6], arr, [0, 1, 2]);
-    }
+    this.turnSide(this.cube3, this.isApostrophe());
+    const arr1 = [this.cube1, [0,3,6]];
+    const arr2 = [this.cube4, [0,3,6]];
+    const arr3 = [this.cube6, [8,5,2]];
+    const arr4 = [this.cube2, [0,3,6]];
+    this.isApostrophe() ? this.turnEdge(arr1,arr2,arr3,arr4) : this.turnEdge(arr1,arr4,arr3,arr2)
   }
 
   moveBack() {
     this.moveCount++;
-    this.turnQuarter(this.cube6, this.isApostrophe());
-    const arr = [this.cube2[0], this.cube2[1], this.cube2[2]];
-    if (this.isApostrophe()) {
-      this.turnCube(this.cube2, [0, 1, 2], this.cube3, [6, 3, 0]);
-      this.turnCube(this.cube3, [6, 3, 0], this.cube4, [8, 7, 6]);
-      this.turnCube(this.cube4, [8, 7, 6], this.cube5, [2, 5, 8]);
-      this.turnCube(this.cube5, [2, 5, 8], arr, [0, 1, 2]);
-    } else {
-      this.turnCube(this.cube2, [0, 1, 2], this.cube5, [2, 5, 8]);
-      this.turnCube(this.cube5, [2, 5, 8], this.cube4, [8, 7, 6]);
-      this.turnCube(this.cube4, [8, 7, 6], this.cube3, [6, 3, 0]);
-      this.turnCube(this.cube3, [6, 3, 0], arr, [0, 1, 2]);
-    }
+    this.turnSide(this.cube6, this.isApostrophe());
+    const arr1 = [this.cube2, [0,1,2]];
+    const arr2 = [this.cube3, [6,3,0]];
+    const arr3 = [this.cube4, [8,7,6]];
+    const arr4 = [this.cube5, [2,5,8]];
+    this.isApostrophe() ? this.turnEdge(arr1,arr2,arr3,arr4) : this.turnEdge(arr1,arr4,arr3,arr2)
   }
 
   moveDown() {
     this.moveCount++;
-    this.turnQuarter(this.cube4, this.isApostrophe());
-    const arr = [this.cube1[6], this.cube1[7], this.cube1[8]];
-    if (this.isApostrophe()) {
-      this.turnCube(this.cube1, [6, 7, 8], this.cube5, [6, 7, 8]);
-      this.turnCube(this.cube5, [6, 7, 8], this.cube6, [6, 7, 8]);
-      this.turnCube(this.cube6, [6, 7, 8], this.cube3, [6, 7, 8]);
-      this.turnCube(this.cube3, [6, 7, 8], arr, [0, 1, 2]);
-    } else {
-      this.turnCube(this.cube1, [6, 7, 8], this.cube3, [6, 7, 8]);
-      this.turnCube(this.cube3, [6, 7, 8], this.cube6, [6, 7, 8]);
-      this.turnCube(this.cube6, [6, 7, 8], this.cube5, [6, 7, 8]);
-      this.turnCube(this.cube5, [6, 7, 8], arr, [0, 1, 2]);
-    }
+    this.turnSide(this.cube4, this.isApostrophe());
+    const arr1 = [this.cube1, [6,7,8]];
+    const arr2 = [this.cube5, [6,7,8]];
+    const arr3 = [this.cube6, [6,7,8]];
+    const arr4 = [this.cube3, [6,7,8]];
+    this.isApostrophe() ? this.turnEdge(arr1,arr2,arr3,arr4) : this.turnEdge(arr1,arr4,arr3,arr2)
   }
 
   setTime() {
