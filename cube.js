@@ -16,26 +16,26 @@ class Cube {
   cube6 = ["R", "R", "R", "R", "R", "R", "R", "R", "R"];
 
   command = "";
-  backtick = [];
+  apostrophe = [];
 
   indexCount = 0;
   moveCount = 0;
 
   execute(input) {
-    this.command = this.removeBacktick(input).split("");
+    this.command = this.removeApostrophe(input).split("");
 
     for (let type of this.command) 
       this.checkType(type);
 
     this.command = "";
-    this.backtick = [];
+    this.apostrophe = [];
     this.indexCount = 0;
   }
 
-  removeBacktick(input) {
-    this.backtick.push(input.indexOf("`"));
-    const removedInput = input.replace("`", "");
-    return removedInput.includes("`") ? this.removeBacktick(removedInput) : removedInput;
+  removeApostrophe(input) {
+    this.apostrophe.push(input.indexOf("'"));
+    const removedInput = input.replace("'", "");
+    return removedInput.includes("'") ? this.removeApostrophe(removedInput) : removedInput;
   }
 
   printCube() {
@@ -65,8 +65,8 @@ class Cube {
     console.log("")
   }
   
-  isBacktick() {
-    return this.backtick.includes(this.indexCount);
+  isApostrophe() {
+    return this.apostrophe.includes(this.indexCount);
   }
 
   isWin() {
@@ -137,7 +137,7 @@ class Cube {
       this.moveLeft();
     else if (type === "D") 
       this.moveDown();
-    this.backtick.includes(this.indexCount) ? console.log(type + "`") : console.log(type);
+    this.isApostrophe() ? console.log(type + "'") : console.log(type);
     this.printCube();
   }
 
@@ -156,9 +156,9 @@ class Cube {
 
   moveUp() {
     this.moveCount++;
-    this.turnQuarter(this.cube2, this.isBacktick());
+    this.turnQuarter(this.cube2, this.isApostrophe());
     const arr = [this.cube1[0], this.cube1[1], this.cube1[2]];
-    if (this.isBacktick()) {
+    if (this.isApostrophe()) {
       this.turnCube(this.cube1, [0, 1, 2], this.cube3, [0, 1, 2]);
       this.turnCube(this.cube3, [0, 1, 2], this.cube6, [0, 1, 2]);
       this.turnCube(this.cube6, [0, 1, 2], this.cube5, [0, 1, 2]);
@@ -173,9 +173,9 @@ class Cube {
 
   moveFront() {
     this.moveCount++;
-    this.turnQuarter(this.cube1, this.isBacktick());
+    this.turnQuarter(this.cube1, this.isApostrophe());
     const arr = [this.cube2[6], this.cube2[7], this.cube2[8]];
-    if (this.isBacktick()) {
+    if (this.isApostrophe()) {
       this.turnCube(this.cube2, [6, 7, 8], this.cube5, [0, 3, 6]);
       this.turnCube(this.cube5, [0, 3, 6], this.cube4, [2, 1, 0]);
       this.turnCube(this.cube4, [2, 1, 0], this.cube3, [8, 5, 2]);
@@ -190,9 +190,9 @@ class Cube {
 
   moveRight() {
     this.moveCount++;
-    this.turnQuarter(this.cube5, this.isBacktick());
+    this.turnQuarter(this.cube5, this.isApostrophe());
     const arr = [this.cube1[2], this.cube1[5], this.cube1[8]];
-    if (this.isBacktick()) {
+    if (this.isApostrophe()) {
       this.turnCube(this.cube1, [2, 5, 8], this.cube2, [2, 5, 8]);
       this.turnCube(this.cube2, [2, 5, 8], this.cube6, [6, 3, 0]);
       this.turnCube(this.cube6, [6, 3, 0], this.cube4, [2, 5, 8]);
@@ -207,9 +207,9 @@ class Cube {
 
   moveLeft() {
     this.moveCount++;
-    this.turnQuarter(this.cube3, this.isBacktick());
+    this.turnQuarter(this.cube3, this.isApostrophe());
     const arr = [this.cube1[0], this.cube1[3], this.cube1[6]];
-    if (this.isBacktick()) {
+    if (this.isApostrophe()) {
       this.turnCube(this.cube1, [0, 3, 6], this.cube4, [0, 3, 6]);
       this.turnCube(this.cube4, [0, 3, 6], this.cube6, [8, 5, 2]);
       this.turnCube(this.cube6, [8, 5, 2], this.cube2, [0, 3, 6]);
@@ -224,9 +224,9 @@ class Cube {
 
   moveBack() {
     this.moveCount++;
-    this.turnQuarter(this.cube6, this.isBacktick());
+    this.turnQuarter(this.cube6, this.isApostrophe());
     const arr = [this.cube2[0], this.cube2[1], this.cube2[2]];
-    if (this.isBacktick()) {
+    if (this.isApostrophe()) {
       this.turnCube(this.cube2, [0, 1, 2], this.cube3, [6, 3, 0]);
       this.turnCube(this.cube3, [6, 3, 0], this.cube4, [8, 7, 6]);
       this.turnCube(this.cube4, [8, 7, 6], this.cube5, [2, 5, 8]);
@@ -241,9 +241,9 @@ class Cube {
 
   moveDown() {
     this.moveCount++;
-    this.turnQuarter(this.cube4, this.isBacktick());
+    this.turnQuarter(this.cube4, this.isApostrophe());
     const arr = [this.cube1[6], this.cube1[7], this.cube1[8]];
-    if (this.isBacktick()) {
+    if (this.isApostrophe()) {
       this.turnCube(this.cube1, [6, 7, 8], this.cube5, [6, 7, 8]);
       this.turnCube(this.cube5, [6, 7, 8], this.cube6, [6, 7, 8]);
       this.turnCube(this.cube6, [6, 7, 8], this.cube3, [6, 7, 8]);
