@@ -142,12 +142,21 @@ class Cube {
   }
 
   turnCube(fromCube, fromIndex, toCube, toIndex) {
-    for (let i = 0; i < 3; i++) 
+    for (let i = 0; i < fromIndex.length; i++) 
       fromCube[fromIndex[i]] = toCube[toIndex[i]];
+  }
+
+  turnQuarter(cube, isReverse) {
+    const arr = [...cube];
+    const cubeOrder = [0,1,2,3,4,5,6,7,8];
+    const turnedOrder = [6,3,0,7,4,1,8,5,2];
+    const reversedOrder = [2,5,8,1,4,7,0,3,6];
+    isReverse ? this.turnCube(cube, cubeOrder, arr, reversedOrder) : this.turnCube(cube, cubeOrder, arr, turnedOrder)
   }
 
   moveUp() {
     this.moveCount++;
+    this.turnQuarter(this.cube2, this.isBacktick());
     const arr = [this.cube1[0], this.cube1[1], this.cube1[2]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [0, 1, 2], this.cube3, [0, 1, 2]);
@@ -164,22 +173,24 @@ class Cube {
 
   moveFront() {
     this.moveCount++;
+    this.turnQuarter(this.cube1, this.isBacktick());
     const arr = [this.cube2[6], this.cube2[7], this.cube2[8]];
     if (this.isBacktick()) {
-      this.turnCube(this.cube2, [6, 7, 8], this.cube3, [8, 5, 2]);
-      this.turnCube(this.cube3, [8, 5, 2], this.cube4, [2, 1, 0]);
-      this.turnCube(this.cube4, [2, 1, 0], this.cube5, [0, 3, 6]);
-      this.turnCube(this.cube5, [0, 3, 6], arr, [0, 1, 2]);
-    } else {
       this.turnCube(this.cube2, [6, 7, 8], this.cube5, [0, 3, 6]);
       this.turnCube(this.cube5, [0, 3, 6], this.cube4, [2, 1, 0]);
       this.turnCube(this.cube4, [2, 1, 0], this.cube3, [8, 5, 2]);
       this.turnCube(this.cube3, [8, 5, 2], arr, [0, 1, 2]);
+    } else {
+      this.turnCube(this.cube2, [6, 7, 8], this.cube3, [8, 5, 2]);
+      this.turnCube(this.cube3, [8, 5, 2], this.cube4, [2, 1, 0]);
+      this.turnCube(this.cube4, [2, 1, 0], this.cube5, [0, 3, 6]);
+      this.turnCube(this.cube5, [0, 3, 6], arr, [0, 1, 2]);
     }
   }
 
   moveRight() {
     this.moveCount++;
+    this.turnQuarter(this.cube5, this.isBacktick());
     const arr = [this.cube1[2], this.cube1[5], this.cube1[8]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [2, 5, 8], this.cube2, [2, 5, 8]);
@@ -196,6 +207,7 @@ class Cube {
 
   moveLeft() {
     this.moveCount++;
+    this.turnQuarter(this.cube3, this.isBacktick());
     const arr = [this.cube1[0], this.cube1[3], this.cube1[6]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [0, 3, 6], this.cube4, [0, 3, 6]);
@@ -212,6 +224,7 @@ class Cube {
 
   moveBack() {
     this.moveCount++;
+    this.turnQuarter(this.cube6, this.isBacktick());
     const arr = [this.cube2[0], this.cube2[1], this.cube2[2]];
     if (this.isBacktick()) {
       this.turnCube(this.cube2, [0, 1, 2], this.cube3, [6, 3, 0]);
@@ -228,6 +241,7 @@ class Cube {
 
   moveDown() {
     this.moveCount++;
+    this.turnQuarter(this.cube4, this.isBacktick());
     const arr = [this.cube1[6], this.cube1[7], this.cube1[8]];
     if (this.isBacktick()) {
       this.turnCube(this.cube1, [6, 7, 8], this.cube5, [6, 7, 8]);
