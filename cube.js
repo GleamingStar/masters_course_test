@@ -1,6 +1,6 @@
 class Cube{
 
-    cube = ['R','R','W','G','C','W','G','B','B'];
+    cube = [ ['R','R','W'], ['G','C','W'], ['G','B','B'] ];
 
     backtick = [];
     
@@ -19,12 +19,9 @@ class Cube{
     }
 
     printCube() {
-        const arr1 = this.cube.slice(0,3);
-        const arr2 = this.cube.slice(3,6);
-        const arr3 = this.cube.slice(6,9);
-        console.log(arr1.join(' '))
-        console.log(arr2.join(' '))
-        console.log(arr3.join(' '))
+        console.log(this.cube[0].join(' '))
+        console.log(this.cube[1].join(' '))
+        console.log(this.cube[2].join(' '))
     }
 
     moveCube(type){
@@ -47,35 +44,35 @@ class Cube{
     }
 
     moveUp() { 
-        const arr = [this.cube[0], this.cube[1], this.cube[2]];
+        const arr = [...this.cube[0]];
         this.backtick.includes(this.count) ? arr.unshift(arr.pop()) : arr.push(arr.shift());
-        this.cube[0] = arr[0];
-        this.cube[1] = arr[1];
-        this.cube[2] = arr[2];
+        this.cube[0][0] = arr[0];
+        this.cube[0][1] = arr[1];
+        this.cube[0][2] = arr[2];
     }
 
     moveRight() {
-        const arr = [this.cube[2], this.cube[5], this.cube[8]];
+        const arr = [this.cube[0][2], this.cube[1][2], this.cube[2][2]];
         this.backtick.includes(this.count) ? arr.unshift(arr.pop()) : arr.push(arr.shift());
-        this.cube[2] = arr[0];
-        this.cube[5] = arr[1];
-        this.cube[8] = arr[2];
+        this.cube[0][2] = arr[0];
+        this.cube[1][2] = arr[1];
+        this.cube[2][2] = arr[2];
     }
 
     moveLeft() {
-        const arr = [this.cube[0], this.cube[3], this.cube[6]];
+        const arr = [this.cube[0][0], this.cube[1][0], this.cube[2][0]];
         this.backtick.includes(this.count) ? arr.push(arr.shift()) : arr.unshift(arr.pop());
-        this.cube[0] = arr[0];
-        this.cube[3] = arr[1];
-        this.cube[6] = arr[2];
+        this.cube[0][0] = arr[0];
+        this.cube[1][0] = arr[1];
+        this.cube[2][0] = arr[2];
     }
 
     moveBottom() {
-        const arr = [this.cube[6], this.cube[7], this.cube[8]];
+        const arr = [...this.cube[2]];
         this.backtick.includes(this.count) ? arr.push(arr.shift()) : arr.unshift(arr.pop());
-        this.cube[6] = arr[0];
-        this.cube[7] = arr[1];
-        this.cube[8] = arr[2];
+        this.cube[2][0] = arr[0];
+        this.cube[2][1] = arr[1];
+        this.cube[2][2] = arr[2];
     }
 }
 
